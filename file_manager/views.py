@@ -18,7 +18,22 @@ def sorting(lst):
     return (sorting([x for x in lst[1:] if x < lst[0]]) + [lst[0]] + sorting([x for x in lst[1:] if x >= lst[0]]))
 
 @csrf_exempt
-def insert(request):
+def read(request):
+    start = time.time()
+
+    objs = StringData.objects.all()
+    length = len(objs)
+
+    end = time.time()
+
+    measure = end - start
+
+    print("length:", length)
+    print("measured time: ", measure)
+    
+    return JsonResponse({"result":"success", "time": measure})
+@csrf_exempt
+def write(request):
     STRING_LENGTH = 150
     start = time.time()
 
