@@ -32,6 +32,7 @@ def read(request):
     print("measured time: ", measure)
     
     return JsonResponse({"result":"success", "time": measure})
+
 @csrf_exempt
 def write(request):
     STRING_LENGTH = 150
@@ -40,38 +41,38 @@ def write(request):
     count = 0
     StringDataList = []
 
-    for i in range(0, 10000):
+    for i in range(0, 500000):
         gen_a = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_b = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_c = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_d = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_e = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
 
-        # data = {
-        #     "string_a":  ''.join(sorting(str(gen_a))),
-        #     "string_b":  ''.join(sorting(str(gen_b))),
-        #     "string_c":  ''.join(sorting(str(gen_c))),
-        #     "string_d":  ''.join(sorting(str(gen_d))),
-        #     "string_e":  ''.join(sorting(str(gen_e))),
-        # }
-        # StringData.objects.create(**data)
+        data = {
+            "string_a":  ''.join(sorting(str(gen_a))),
+            "string_b":  ''.join(sorting(str(gen_b))),
+            "string_c":  ''.join(sorting(str(gen_c))),
+            "string_d":  ''.join(sorting(str(gen_d))),
+            "string_e":  ''.join(sorting(str(gen_e))),
+        }
+        StringData.objects.create(**data)
 
-        data = StringData(
-            string_a = ''.join(sorting(str(gen_a))),
-            string_b = ''.join(sorting(str(gen_b))),
-            string_c = ''.join(sorting(str(gen_c))),
-            string_d = ''.join(sorting(str(gen_d))),
-            string_e = ''.join(sorting(str(gen_e))),
-        )
+        # data = StringData(
+        #     string_a = ''.join(sorting(str(gen_a))),
+        #     string_b = ''.join(sorting(str(gen_b))),
+        #     string_c = ''.join(sorting(str(gen_c))),
+        #     string_d = ''.join(sorting(str(gen_d))),
+        #     string_e = ''.join(sorting(str(gen_e))),
+        # )
 
-        StringDataList.append(data)
+        # StringDataList.append(data)
 
-        if count % 100000 == 0 or i == 499999:
-            print(count)
-            StringData.objects.bulk_create(StringDataList)
-            StringDataList = []
+        # if count % 100000 == 0 or i == 499999:
+        #     print(count)
+        #     StringData.objects.bulk_create(StringDataList)
+        #     StringDataList = []
 
-        count += 1
+        # count += 1
         
     end = time.time()
 

@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+from . import views, multi_views
 
 urlpatterns = [
     path('read/', views.read),
     path('write/', views.write),
+    path('delete/', multi_views.deleteAll),
+    path('multiread/', multi_views.multiread),
+    path('multiwrite/', multi_views.multiwrite),
     path('download/', views.download),
     path('upload/', views.upload),
     path('index/', views.index),
