@@ -11,8 +11,6 @@ import string
 import random
 import time
 from multiprocessing import Process, Pool, Manager
-from rdkit import Chem
-from rdkit.Chem import Descriptors
 from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection, transaction
