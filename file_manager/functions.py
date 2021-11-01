@@ -16,14 +16,22 @@ from rdkit.Chem import Descriptors
 from math import ceil
 from django.core.paginator import Paginator
 from django.db import connection, transaction
+import sqlite3
 
 def sorting(lst):
     if not lst:
         return []
     return (sorting([x for x in lst[1:] if x < lst[0]]) + [lst[0]] + sorting([x for x in lst[1:] if x >= lst[0]]))
 
-def functionForMultiwrite(meaningless, size):
+def functionForMultiwrite(meaningless, size, process_number):
+    # conn = sqlite3.connect(r'C:\\Users\\jay\\Documents\\file_manager\\db.sqlite3', isolation_level='EXCLUSIVE', timeout=30.0)
+    conn = sqlite3.connect('db.sqlite3', isolation_level='EXCLUSIVE')
+    c = conn.cursor()
+
     STRING_LENGTH = 150
+    stringList = []
+    subquery = ''
+    count = 1
 
     for i in range(0, size):
         gen_a = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
@@ -32,14 +40,58 @@ def functionForMultiwrite(meaningless, size):
         gen_d = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_e = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
 
-        data = {
-            "string_a":  ''.join(sorting(str(gen_a))),
-            "string_b":  ''.join(sorting(str(gen_b))),
-            "string_c":  ''.join(sorting(str(gen_c))),
-            "string_d":  ''.join(sorting(str(gen_d))),
-            "string_e":  ''.join(sorting(str(gen_e))),
-        }
-        StringData.objects.create(**data)
+        #=========================================================================================
+        # Raw
+        #=========================================================================================
+        # data = {
+        #     "string_a":  ''.join(sorting(str(gen_a))),
+        #     "string_b":  ''.join(sorting(str(gen_b))),
+        #     "string_c":  ''.join(sorting(str(gen_c))),
+        #     "string_d":  ''.join(sorting(str(gen_d))),
+        #     "string_e":  ''.join(sorting(str(gen_e))),
+        # }
+        # StringData.objects.create(**data)
+
+        #=========================================================================================
+        # bulk insert sql
+        #=========================================================================================
+        a = ''.join(sorting(str(gen_a)))
+        b = ''.join(sorting(str(gen_b)))
+        c = ''.join(sorting(str(gen_c)))
+        d = ''.join(sorting(str(gen_d)))
+        e = ''.join(sorting(str(gen_e)))
+
+        subquery += f'''
+            ('{a}', '{b}', '{c}', '{d}', '{e}')
+        '''
+        #=========================================================================================
+        # bulk insert model
+        #=========================================================================================
+        stringList.append(
+            StringData(
+                string_a = ''.join(sorting(str(gen_a))),
+                string_b = ''.join(sorting(str(gen_b))),
+                string_c = ''.join(sorting(str(gen_c))),
+                string_d = ''.join(sorting(str(gen_d))),
+                string_e = ''.join(sorting(str(gen_e))),
+            )
+        )
+        
+        if count % 10000 == 0:
+            print("process(" + str(process_number) + "):", count)
+            # StringData.objects.bulk_create(stringList)
+            # stringList = []
+
+            c = conn.cursor()
+
+            query = 'INSERT INTO management_stringdata (string_a, string_b, string_c, string_d, string_e) VALUES ' + subquery
+            subquery = ''
+        else:
+            subquery += ', '
+        
+        count += 1
+
+    conn.close()
 
 def multiwriteWrapper(total_data_amount, num_process):
     print("multi_function_by_process")
@@ -47,7 +99,7 @@ def multiwriteWrapper(total_data_amount, num_process):
     batch_size = ceil(total_data_amount/num_process)
     process = []
     for i in range(num_process):
-        p = Process(target = functionForMultiwrite, args = ([], batch_size))
+        p = Process(target = functionForMultiwrite, args = ([], batch_size, i))
 
         # 프로세스를 컨트롤 할 수 있게 하기 위해 주소를 저장해둬야함
         process.append(p)
