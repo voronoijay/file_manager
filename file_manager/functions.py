@@ -101,7 +101,9 @@ def functionForMultiwrite(meaningless, size, process_number):
             measure = "%.2f" % measure
             start = time.time()
 
-            print("process(" + str(process_number) + "):", count, ", measured time:", measure, ", total time:", totalTime)
+            formattedProcessNum = '{:02}'.format(process_number)
+
+            print("process(" + str(formattedProcessNum) + "):", count, ", measured time:", measure, ", total time:", totalTime)
             # StringData.objects.bulk_create(stringList)
             # stringList = []
 
