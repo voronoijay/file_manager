@@ -99,6 +99,7 @@ def functionForMultiwrite(meaningless, size, process_number):
             totalTime = "%.2f" % totalTime
             measure = end - start
             measure = "%.2f" % measure
+            start = time.time()
 
             print("process(" + str(process_number) + "):", count, ", measured time:", measure, ", total time:", totalTime)
             # StringData.objects.bulk_create(stringList)
