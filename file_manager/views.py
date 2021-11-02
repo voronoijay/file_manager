@@ -37,11 +37,14 @@ def read(request):
 def write(request):
     STRING_LENGTH = 150
     start = time.time()
+    initStart = time.time()
 
     count = 0
     StringDataList = []
 
-    for i in range(0, 500000):
+    LEN = 60000000
+
+    for i in range(0, LEN):
         gen_a = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_b = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_c = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
@@ -67,8 +70,15 @@ def write(request):
 
         # StringDataList.append(data)
 
-        # if count % 100000 == 0 or i == 499999:
-        #     print(count)
+        if count % 100000 == 0 or count == LEN - 1:
+            end = time.time()
+            totalTime = end - initStart
+            totalTime = "%.2f" % totalTime
+            measure = end - start
+            measure = "%.2f" % measure
+            print("process:", count, ", measured time:", measure, ", total time:", totalTime)
+
+            start = time.time()
         #     StringData.objects.bulk_create(StringDataList)
         #     StringDataList = []
 
@@ -76,7 +86,7 @@ def write(request):
         
     end = time.time()
 
-    measure = end - start
+    measure = end - initStart
 
     print("measured time: ", measure)
     
