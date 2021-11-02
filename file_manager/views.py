@@ -39,7 +39,7 @@ def write(request):
     start = time.time()
     initStart = time.time()
 
-    count = 0
+    count = 1
     StringDataList = []
 
     LEN = 60000000
@@ -82,7 +82,7 @@ def write(request):
         #     StringData.objects.bulk_create(StringDataList)
         #     StringDataList = []
 
-        # count += 1
+        count += 1
         
     end = time.time()
 
