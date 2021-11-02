@@ -49,11 +49,11 @@ def functionForMultiwrite(meaningless, size, process_number):
         gen_d = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_e = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
 
-        string_a = sorting(str(gen_a))
-        string_b = sorting(str(gen_b))
-        string_c = sorting(str(gen_c))
-        string_d = sorting(str(gen_d))
-        string_e = sorting(str(gen_e))
+        string_a = ''.join(sorting(str(gen_a)))
+        string_b = ''.join(sorting(str(gen_b)))
+        string_c = ''.join(sorting(str(gen_c)))
+        string_d = ''.join(sorting(str(gen_d)))
+        string_e = ''.join(sorting(str(gen_e)))
 
         #=========================================================================================
         # single insert model
