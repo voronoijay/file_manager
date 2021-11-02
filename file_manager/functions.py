@@ -93,7 +93,7 @@ def functionForMultiwrite(meaningless, size, process_number):
         #     )
         # )
         
-        if count % 100000 == 0:
+        if count % 100000 == 0 or count == size - 1:
             end = time.time()
             totalTime = end - initStart
             totalTime = "%.2f" % totalTime
