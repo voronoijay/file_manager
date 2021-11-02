@@ -22,14 +22,25 @@ def sorting(lst):
     return (sorting([x for x in lst[1:] if x < lst[0]]) + [lst[0]] + sorting([x for x in lst[1:] if x >= lst[0]]))
 
 def functionForMultiwrite(meaningless, size, process_number):
+    #------------------------------------------------------------------------------------
+    # Sqlite3
+    #------------------------------------------------------------------------------------
     # conn = sqlite3.connect(r'C:\\Users\\jay\\Documents\\file_manager\\db.sqlite3', isolation_level='EXCLUSIVE', timeout=30.0)
-    conn = sqlite3.connect('db.sqlite3', isolation_level='EXCLUSIVE')
-    c = conn.cursor()
+    # conn = sqlite3.connect('db.sqlite3', isolation_level='EXCLUSIVE')
+    # c = conn.cursor()
+
+    #------------------------------------------------------------------------------------
+    # Postgres
+    #------------------------------------------------------------------------------------
+    c = connection.cursor()
 
     STRING_LENGTH = 150
     stringList = []
     subquery = ''
     count = 1
+
+    initStart = time.time()
+    start = time.time()
 
     for i in range(0, size):
         gen_a = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
@@ -38,58 +49,74 @@ def functionForMultiwrite(meaningless, size, process_number):
         gen_d = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
         gen_e = ''.join(random.choices(string.ascii_uppercase + string.digits, k = STRING_LENGTH))
 
+        string_a = sorting(str(gen_a))
+        string_b = sorting(str(gen_b))
+        string_c = sorting(str(gen_c))
+        string_d = sorting(str(gen_d))
+        string_e = sorting(str(gen_e))
+
         #=========================================================================================
-        # Raw
+        # single insert model
         #=========================================================================================
-        # data = {
-        #     "string_a":  ''.join(sorting(str(gen_a))),
-        #     "string_b":  ''.join(sorting(str(gen_b))),
-        #     "string_c":  ''.join(sorting(str(gen_c))),
-        #     "string_d":  ''.join(sorting(str(gen_d))),
-        #     "string_e":  ''.join(sorting(str(gen_e))),
-        # }
-        # StringData.objects.create(**data)
+        data = {
+            "string_a":  string_a,
+            "string_b":  string_b,
+            "string_c":  string_c,
+            "string_d":  string_d,
+            "string_e":  string_e,
+        }
+        StringData.objects.create(**data)
+
+        #=========================================================================================
+        # single insert sql
+        #=========================================================================================
+        # query = 'INSERT INTO management_stringdata (string_a, string_b, string_c, string_d, string_e) VALUES ' + f"('{string_a}', '{string_b}', '{string_c}', '{string_d}', '{string_e}')"
+        # c.execute(query)
+        # connection.commit()
 
         #=========================================================================================
         # bulk insert sql
         #=========================================================================================
-        a = ''.join(sorting(str(gen_a)))
-        b = ''.join(sorting(str(gen_b)))
-        c = ''.join(sorting(str(gen_c)))
-        d = ''.join(sorting(str(gen_d)))
-        e = ''.join(sorting(str(gen_e)))
-
-        subquery += f'''
-            ('{a}', '{b}', '{c}', '{d}', '{e}')
-        '''
+        # subquery += f'''
+        #     ('{string_a}', '{string_b}', '{string_c}', '{string_d}', '{string_e}')
+        # '''
         #=========================================================================================
         # bulk insert model
         #=========================================================================================
-        stringList.append(
-            StringData(
-                string_a = ''.join(sorting(str(gen_a))),
-                string_b = ''.join(sorting(str(gen_b))),
-                string_c = ''.join(sorting(str(gen_c))),
-                string_d = ''.join(sorting(str(gen_d))),
-                string_e = ''.join(sorting(str(gen_e))),
-            )
-        )
+        # stringList.append(
+        #     StringData(
+        #         string_a = string_a,
+        #         string_b = string_b,
+        #         string_c = string_c,
+        #         string_d = string_d,
+        #         string_e = string_e,
+        #     )
+        # )
         
-        if count % 10000 == 0:
-            print("process(" + str(process_number) + "):", count)
+        if count % 100000 == 0:
+            end = time.time()
+            totalTime = end - initStart
+            totalTime = "%.2f" % totalTime
+            measure = end - start
+            measure = "%.2f" % measure
+
+            print("process(" + str(process_number) + "):", count, ", measured time:", measure, ", total time:", totalTime)
             # StringData.objects.bulk_create(stringList)
             # stringList = []
 
-            c = conn.cursor()
+            # c = conn.cursor()
+            # c = connection.cursor()
 
-            query = 'INSERT INTO management_stringdata (string_a, string_b, string_c, string_d, string_e) VALUES ' + subquery
-            subquery = ''
-        else:
-            subquery += ', '
+            # query = 'INSERT INTO management_stringdata (string_a, string_b, string_c, string_d, string_e) VALUES ' + subquery
+            # subquery = ''
+            # c.execute(query)
+            # connection.commit()
+        # else:
+        #     subquery += ', '
         
         count += 1
 
-    conn.close()
+    # conn.close()
 
 def multiwriteWrapper(total_data_amount, num_process):
     print("multi_function_by_process")
