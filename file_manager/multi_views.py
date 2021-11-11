@@ -97,4 +97,9 @@ def deleteAll(request):
     measure = end - start
     print("measured time: ", measure)
 
+    c = connection.cursor()
+    query = "ALTER SEQUENCE management_stringdata_id_seq RESTART WITH 1"
+    c.execute(query)
+    connection.commit()
+
     return JsonResponse({"result":"success", "time": measure})
